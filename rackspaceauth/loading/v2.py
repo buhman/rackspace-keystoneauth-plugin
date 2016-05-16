@@ -67,3 +67,21 @@ class Token(loading.BaseV2Loader):
                         help='Token'),
         ])
         return options
+
+
+class RSAToken(loading.BaseV2Loader):
+
+    @property
+    def plugin_class(self):
+        return v2.RSAToken
+
+    def get_options(self):
+        options = super(RSAToken, self).get_options()
+
+        options.extend([
+            loading.Opt('token',
+                        help='RSA Token'),
+            loading.Opt('username',
+                        help='Username')
+        ])
+        return options

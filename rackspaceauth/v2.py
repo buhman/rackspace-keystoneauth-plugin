@@ -136,3 +136,28 @@ class Token(RackspaceAuth):
     def get_auth_data(self, headers=None):
         return {"token": {"id": self.token},
                 "tenantId": self.tenant_id}
+
+
+class RSAToken(RaxAuthDomainAuth):
+
+    def __init__(self, username=None, token=None, auth_domain=True,
+                 **kwargs):
+        """A plugin for authentication with a Racker RSA token
+
+        :param str username: Username to authenticate with
+        :param str token: RSA token
+        """
+
+        super(RSAToken, self).__init__(auth_domain=auth_domain, **kwargs)
+
+        self.username = username
+        self.token = token
+
+    @rax_auth_domain
+    def get_auth_data(self, headers=None):
+        return {
+            "RAX-AUTH:rsaCredentials": {
+                "tokenKey": self.token,
+                "username": self.username
+            }
+        }

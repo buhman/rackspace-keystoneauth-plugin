@@ -49,6 +49,15 @@ class TestRackspaceauth(unittest2.TestCase):
 
         self.assertEqual(data['RAX-AUTH:domain']['name'], 'Rackspace')
 
+    def test_rsa_token(self):
+        token = "12345678"
+
+        auth = v2.RSAToken(token=token, auth_url=None)
+        data = auth.get_auth_data()
+
+        self.assertEqual(data['RAX-AUTH:domain']['name'], 'Rackspace')
+        self.assertEqual(data['RAX-AUTH:rsaCredentials']['tokenKey'], token)
+
     def test_token(self):
         tenant = "queso"
         token = "fresco"
