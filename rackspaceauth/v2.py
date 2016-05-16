@@ -95,7 +95,7 @@ class APIKey(RackspaceAuth):
                 {"username": self.username, "apiKey": self.api_key}}
 
 
-class Password(RackspaceAuth):
+class Password(RaxAuthDomainAuth):
 
     def __init__(self, username=None, password=None, reauthenticate=True,
                  auth_url=AUTH_URL, **kwargs):
@@ -106,12 +106,14 @@ class Password(RackspaceAuth):
         :param bool reauthenticate: Allow fetching a new token if the current
                                     one is about to expire.
         """
-        super(Password, self).__init__(auth_url, reauthenticate=reauthenticate)
+        super(Password, self).__init__(auth_url=auth_url,
+                                       reauthenticate=reauthenticate, **kwargs)
 
         self.username = username
         self.password = password
         self.auth_url = auth_url
 
+    @rax_auth_domain
     def get_auth_data(self, headers=None):
         return {"passwordCredentials": {
                 "username": self.username, "password": self.password}}

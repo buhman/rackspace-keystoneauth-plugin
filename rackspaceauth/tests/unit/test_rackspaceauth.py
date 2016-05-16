@@ -41,6 +41,14 @@ class TestRackspaceauth(unittest2.TestCase):
         self.assertEqual(creds["username"], user)
         self.assertEqual(creds["password"], password)
 
+    def test_password_domain(self):
+        auth_domain = True
+
+        auth = v2.Password(auth_domain=auth_domain)
+        data = auth.get_auth_data()
+
+        self.assertEqual(data['RAX-AUTH:domain']['name'], 'Rackspace')
+
     def test_token(self):
         tenant = "queso"
         token = "fresco"
