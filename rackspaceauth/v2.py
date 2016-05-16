@@ -30,6 +30,22 @@ from keystoneauth1.identity import v2
 AUTH_URL = "https://identity.api.rackspacecloud.com/v2.0/"
 
 
+def rax_auth_domain(func):
+    def wrapper(self, *args, **kwargs):
+        data = func(self, *args, **kwargs)
+        if self.auth_domain:
+            if isinstance(self.auth_domain, bool):
+                auth_data = {'name': 'Rackspace'}
+            elif isinstance(self.auth_domain, dict):
+                auth_data = self.auth_domain
+            else:
+                raise ValueError
+
+            data.update({'RAX-AUTH:domain': auth_data})
+        return data
+    return wrapper
+
+
 class RackspaceAuth(v2.Auth):
 
     def get_endpoint(self, session, service_type=None, interface=None,
@@ -42,6 +58,19 @@ class RackspaceAuth(v2.Auth):
         if service_type == 'network':
             endpoint = endpoint.strip('/v2.0')
         return endpoint
+
+
+class RaxAuthDomainAuth(RackspaceAuth):
+
+    def __init__(self, auth_domain=None, **kwargs):
+        """Abstract RAX-AUTH:domain mixin
+
+        :param bool auth_domain: Authenticate as a Racker
+        :param dict auth_domain: Custom RAX-AUTH:domain parameters
+        """
+        super(RaxAuthDomainAuth, self).__init__(**kwargs)
+
+        self.auth_domain = auth_domain
 
 
 class APIKey(RackspaceAuth):
