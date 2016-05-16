@@ -30,7 +30,7 @@ from keystoneauth1.identity import v2
 AUTH_URL = "https://identity.api.rackspacecloud.com/v2.0/"
 
 
-def rax_auth_domain(func):
+def domain_auth(func):
     def wrapper(self, *args, **kwargs):
         data = func(self, *args, **kwargs)
         if self.auth_domain:
@@ -60,7 +60,7 @@ class RackspaceAuth(v2.Auth):
         return endpoint
 
 
-class RaxAuthDomainAuth(RackspaceAuth):
+class DomainAuth(RackspaceAuth):
 
     def __init__(self, auth_domain=None, **kwargs):
         """Abstract RAX-AUTH:domain mixin
@@ -68,7 +68,7 @@ class RaxAuthDomainAuth(RackspaceAuth):
         :param bool auth_domain: Authenticate as a Racker
         :param dict auth_domain: Custom RAX-AUTH:domain parameters
         """
-        super(RaxAuthDomainAuth, self).__init__(**kwargs)
+        super(DomainAuth, self).__init__(**kwargs)
 
         self.auth_domain = auth_domain
 
@@ -95,7 +95,7 @@ class APIKey(RackspaceAuth):
                 {"username": self.username, "apiKey": self.api_key}}
 
 
-class Password(RaxAuthDomainAuth):
+class Password(DomainAuth):
 
     def __init__(self, username=None, password=None, reauthenticate=True,
                  auth_url=AUTH_URL, **kwargs):
@@ -113,7 +113,7 @@ class Password(RaxAuthDomainAuth):
         self.password = password
         self.auth_url = auth_url
 
-    @rax_auth_domain
+    @domain_auth
     def get_auth_data(self, headers=None):
         return {"passwordCredentials": {
                 "username": self.username, "password": self.password}}
@@ -138,7 +138,7 @@ class Token(RackspaceAuth):
                 "tenantId": self.tenant_id}
 
 
-class RSAToken(RaxAuthDomainAuth):
+class RSAToken(DomainAuth):
 
     def __init__(self, username=None, token=None, auth_domain=True,
                  **kwargs):
@@ -153,7 +153,7 @@ class RSAToken(RaxAuthDomainAuth):
         self.username = username
         self.token = token
 
-    @rax_auth_domain
+    @domain_auth
     def get_auth_data(self, headers=None):
         return {
             "RAX-AUTH:rsaCredentials": {
