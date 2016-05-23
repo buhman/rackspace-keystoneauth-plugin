@@ -34,14 +34,7 @@ def domain_auth(func):
     def wrapper(self, *args, **kwargs):
         data = func(self, *args, **kwargs)
         if self.auth_domain:
-            if isinstance(self.auth_domain, bool):
-                auth_data = {'name': 'Rackspace'}
-            elif isinstance(self.auth_domain, dict):
-                auth_data = self.auth_domain
-            else:
-                raise ValueError
-
-            data.update({'RAX-AUTH:domain': auth_data})
+            data.update({'RAX-AUTH:domain': self.auth_domain})
         return data
     return wrapper
 
@@ -140,8 +133,8 @@ class Token(RackspaceAuth):
 
 class RSAToken(DomainAuth):
 
-    def __init__(self, username=None, token=None, auth_domain=True,
-                 **kwargs):
+    def __init__(self, username=None, token=None,
+                 auth_domain={'name': 'Rackspace'}, **kwargs):
         """A plugin for authentication with a Racker RSA token
 
         :param str username: Username to authenticate with

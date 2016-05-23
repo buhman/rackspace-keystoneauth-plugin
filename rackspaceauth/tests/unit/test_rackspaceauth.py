@@ -42,7 +42,7 @@ class TestRackspaceauth(unittest2.TestCase):
         self.assertEqual(creds["password"], password)
 
     def test_password_domain(self):
-        auth_domain = True
+        auth_domain = {'name': 'Rackspace'}
 
         auth = v2.Password(auth_domain=auth_domain)
         data = auth.get_auth_data()
